@@ -203,6 +203,12 @@ app.MapDelete("/eventUser/{eventId}/{userId}", (int eventId, int userId, EADbCon
 
     return Results.Ok("Item removed from order successfully");
 });
+// Misc Endpoint 
+//  get all categories
+app.MapGet("/category", (EADbContext db) =>
+{
+    return db.Categories.ToList();
+});
 
 app.Run();
 
