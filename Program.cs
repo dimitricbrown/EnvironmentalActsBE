@@ -148,7 +148,7 @@ app.MapGet("/events/{id}", (EADbContext db, int id) =>
     return Results.Ok(events);
 });
 //update a Event
-app.MapPut("/orders/{id}", (int id, EADbContext db, Event Event) =>
+app.MapPut("/events/{id}", (int id, EADbContext db, Event Event) =>
 {
     Event eventToUpdate = db.Events.SingleOrDefault(o => o.Id == id);
     if (eventToUpdate == null)
