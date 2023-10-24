@@ -148,7 +148,7 @@ app.MapGet("/events/{id}", (EADbContext db, int id) =>
     return Results.Ok(events);
 });
 //update a Event
-app.MapPut("/orders/{id}", (int id, EADbContext db, Event Event) =>
+app.MapPut("/events/{id}", (int id, EADbContext db, Event Event) =>
 {
     Event eventToUpdate = db.Events.SingleOrDefault(o => o.Id == id);
     if (eventToUpdate == null)
@@ -202,6 +202,12 @@ app.MapDelete("/eventUser/{eventId}/{userId}", (int eventId, int userId, EADbCon
     db.SaveChanges();
 
     return Results.Ok("Item removed from order successfully");
+});
+// Misc Endpoint 
+//  get all categories
+app.MapGet("/category", (EADbContext db) =>
+{
+    return db.Categories.ToList();
 });
 
 app.Run();
