@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:3000",
-                                "http://localhost:7003") // Change to match your SWAGGER Url *****
+                                "http://localhost:7195") // Change to match your SWAGGER Url *****
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
         });
@@ -58,7 +58,7 @@ app.UseHttpsRedirection();
 //  check user
 app.MapGet("/checkuser/{uid}", (EADbContext db, string uid) =>
 {
-    var user = db.Users.Where(x => x.uid == uid).ToList();
+    var user = db.Users.Where(x => x.Uid == uid).ToList();
     if (uid == null)
     {
         return Results.NotFound();
@@ -86,17 +86,56 @@ app.MapPost("/users", (EADbContext db, User User) =>
     db.SaveChanges();
     return Results.Created($"/user/{User.Id}", User);
 });
+// update a user
+app.MapPut("/users/{id}", (int id, EADbContext db, User User) =>
+{
+    User userToUpdate = db.Users.SingleOrDefault(u => u.Id == id);
+    if (userToUpdate == null)
+    {
+        return Results.NotFound();
+    }
+    userToUpdate.FirstName = User.FirstName;
+    userToUpdate.LastName = User.LastName;
+    userToUpdate.Email = User.Email;
+    db.SaveChanges();
+    return Results.Ok(userToUpdate);
+});
+// delete a user
+app.MapDelete("/users/{id}", (EADbContext db, int id) =>
+{
+    User userToDelete = db.Users.SingleOrDefault(u => u.Id == id);
+    if (userToDelete == null)
+    {
+        return Results.NotFound();
+    }
+    db.Users.Remove(userToDelete);
+    db.SaveChanges();
+    return Results.NoContent();
+});
 // events a user has signed up for 
 app.MapGet("/userEvents/{uid}", async (EADbContext db, string uid) =>
 {
     var userEvents = await db.Events
-        .Where(e => e.Users.Any(u => u.uid == uid))
+        .Where(e => e.Users.Any(u => u.Uid == uid))
         .Include(e => e.Users)
         .Include(e => e.Category)
         .ToListAsync();
 
     return Results.Ok(userEvents);
 });
+// events a user has created 
+app.MapGet("/userEvents/{createdBy}", async (EADbContext db, string createdBy) =>
+{
+    var userEvents = await db.Events
+        .Where(e => e.Users.Any(u => u.Uid == createdBy))
+        .Include(e => e.Users)
+        .Include(e => e.Category)
+        .ToListAsync();
+
+    return Results.Ok(userEvents);
+});
+
+
 //  EVENT ENDPOINTS
 // get users on a event 
 app.MapGet("/eventUser/{id}", (EADbContext db, int id) =>
@@ -156,7 +195,7 @@ app.MapPut("/events/{id}", (int id, EADbContext db, Event Event) =>
         return Results.NotFound();
     }
     eventToUpdate.ScheduledDate = Event.ScheduledDate;
-    eventToUpdate.categoryId = Event.categoryId;
+    eventToUpdate.CategoryId = Event.CategoryId;
     eventToUpdate.Description = Event.Description;
     eventToUpdate.Title = Event.Title;
     db.SaveChanges();
@@ -181,7 +220,7 @@ app.MapDelete("/events/{id}", (EADbContext db, int id) =>
     db.SaveChanges();
     return Results.NoContent();
 });
-// delete a product from an order 
+// delete an event from a user
 app.MapDelete("/eventUser/{eventId}/{userId}", (int eventId, int userId, EADbContext db) =>
 {
     var user = db.Users.Include(u => u.Events).FirstOrDefault(u => u.Id == userId);
@@ -201,11 +240,11 @@ app.MapDelete("/eventUser/{eventId}/{userId}", (int eventId, int userId, EADbCon
     user.Events.Remove(eventToRemove);
     db.SaveChanges();
 
-    return Results.Ok("Item removed from order successfully");
+    return Results.Ok("Event removed from user successfully");
 });
 // Misc Endpoint 
 //  get all categories
-app.MapGet("/category", (EADbContext db) =>
+app.MapGet("/categories", (EADbContext db) =>
 {
     return db.Categories.ToList();
 });
