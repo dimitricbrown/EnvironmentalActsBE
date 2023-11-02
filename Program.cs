@@ -127,13 +127,15 @@ app.MapGet("/userEvents/{uid}", async (EADbContext db, string uid) =>
 // get users on a event 
 app.MapGet("/eventUser/{id}", (EADbContext db, int id) =>
 {
-    var eventUsersToGet = db.Events.Where(e => e.Id == id).Include(u => u.Users).ToList();
+    var eventUsersToGet = db.Events.Where(e => e.Id == id)
+    .Include(e => e.Category)
+    .Include(u => u.Users).ToList();
     return eventUsersToGet;
 });
 // get events that a user created 
-app.Map("/eventUser/{uid}", (EADbContext db, string uid) =>
+app.MapGet("/createdEventUser/{uid}", (EADbContext db, string uid) =>
 {
-    var createdEvents = db.Events.Where(e => e.uid == uid).ToList();
+    var createdEvents = db.Events.Where(e => e.uid == uid).Include(e => e.Category).ToList();
     return createdEvents;
 });
 // add a user to a event 
