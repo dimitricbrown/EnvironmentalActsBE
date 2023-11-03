@@ -173,7 +173,7 @@ app.MapGet("/events", async (EADbContext db) =>
 // get events by id
 app.MapGet("/events/{id}", (EADbContext db, int id) =>
 {
-    var events = db.Events.Find(id);
+    var events = db.Events.Where(e => e.Id == id).Include(e => e.Category).ToList();
     if (events == null)
     {
         return Results.NotFound(id);
