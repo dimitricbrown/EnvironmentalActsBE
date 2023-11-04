@@ -21,6 +21,28 @@ This C# backend solution serves as the server-side component for managing users 
    ```bash
    git clone git@github.com:dimitricbrown/EnvironmentalActsBE.git
    cd EnvironmentalActsBE
+1. Inside the `EnvironmentalActsBE` directory, run `dotnet new gitignore`
+1. Install these required dependencies with:
+    ``` bash
+    dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 6.0
+    ```
+    and: 
+    ``` bash
+    dotnet add package Microsoft.EntityFrameworkCore.Design --version 6.0
+    ```
+1. Run this to be able to store secrets for this app: 
+    ``` bash
+    dotnet user-secrets init
+    ```
+1. Add the connection string to the secrets for this app with this (make sure you change `<your_postgresql_password>` to your db password!):
+    ``` bash
+    dotnet user-secrets set "EADbConnectionString" "Host=localhost;Port=5432;Username=postgres;Password=<your_postgresql_password>;Database=EA"
+    ```
+1. We are ready to actually run the tool that will create our PostgreSQL database from our C# code! Migrations have already been added. To update your database, run this:
+    ``` bash
+    dotnet ef database update
+    ```
+1. If everything goes well, you should now have a database ready to query! Open pgAdmin, and take a look at the database that EF Core created.
    
 ## Usage
 
