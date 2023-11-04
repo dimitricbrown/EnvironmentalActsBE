@@ -6,6 +6,7 @@ This C# backend solution serves as the server-side component for managing users 
 
 ## Table of Contents
 
+- [Tech Stack](#tech-stack)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
@@ -13,6 +14,13 @@ This C# backend solution serves as the server-side component for managing users 
 - [Database](#database)
 - [Testing](#testing)
 - [Contributors](#contributors)
+
+## Tech Stack
+
+- C#
+- ASP.NET Core
+- Entity Framework
+- Postgres SQL Server
 
 ## Installation
 
